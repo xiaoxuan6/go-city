@@ -47,14 +47,6 @@ var provinces = map[int]string{
 
 var url = "https://fts.jd.com/area/get?fid=%d"
 
-type response struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Pid  int    `json:"pid"`
-}
-
-var item []response
-
 var count struct {
 	ProvinceNum int `json:"province_num"`
 	CityNum     int `json:"city_num"`
@@ -64,25 +56,26 @@ var count struct {
 
 func Run(c *cli.Context) error {
 
-	syncAll()
-
 	driver := c.String("driver")
 	switch driver {
 	case "sqlite":
+		InitSqlite(c.String("db"))
 	case "memory":
-		// TODO::
+		InitSqlite(":memory:")
 	case "database":
-		// TODO::
+		InitSql(c.String("host"), c.String("port"), c.String("username"), c.String("password"), c.String("dbname"))
 	default:
 		logrus.Error("无效的 driver")
 	}
+
+	syncAll()
 
 	logrus.Info(fmt.Sprintf("数据同步完成，其中省级行政区：%d，城市：%d，区县：%d，乡镇街道：%d", count.ProvinceNum, count.CityNum, count.AreaNum, count.StreetNum))
 
 	return nil
 }
 
-func syncById(pid int) (res []response) {
+func syncById(pid int) (res []Response) {
 	err := gout.GET(fmt.Sprintf(url, pid)).
 		BindJSON(&res).
 		Do()
@@ -103,34 +96,53 @@ func syncAll() {
 	count.ProvinceNum = provinceCount
 	bar := progressbar.Default(int64(provinceCount))
 	for key, val := range provinces {
-		item = append(item, response{Id: key, Name: val, Pid: 0})
+		save(Response{ID: key, Name: val, Pid: 0})
+
 		city(key)
 		_ = bar.Add(1)
 	}
 }
 
+var cityResponse []Response
+
 func city(id int) {
 	result := syncById(id)
-	item = append(item, result...)
-	count.CityNum = count.CityNum + len(item)
+	cityResponse = append(cityResponse, result...)
+	count.CityNum = count.CityNum + len(cityResponse)
+
+	if len(result) > 0 {
+		save(result...)
+	}
 
 	for _, val := range result {
-		area(val.Id)
+		area(val.ID)
 	}
 }
+
+var areaResponse []Response
 
 func area(id int) {
 	result := syncById(id)
-	item = append(item, result...)
-	count.AreaNum = count.AreaNum + len(item)
+	areaResponse = append(areaResponse, result...)
+	count.AreaNum = count.AreaNum + len(areaResponse)
+
+	if len(result) > 0 {
+		save(result...)
+	}
 
 	for _, val := range result {
-		sheet(val.Id)
+		street(val.ID)
 	}
 }
 
-func sheet(id int) {
+var streetResponse []Response
+
+func street(id int) {
 	result := syncById(id)
-	item = append(item, result...)
-	count.StreetNum = count.StreetNum + len(result)
+	streetResponse = append(streetResponse, result...)
+	count.StreetNum = count.StreetNum + len(streetResponse)
+
+	if len(result) > 0 {
+		save(result...)
+	}
 }
