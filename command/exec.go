@@ -63,7 +63,14 @@ func Run(c *cli.Context) error {
 	case "memory":
 		InitSqlite(":memory:")
 	case "database":
-		InitSql(c.String("host"), c.String("port"), c.String("username"), c.String("password"), c.String("dbname"))
+		InitSql(
+			c.String("host"),
+			c.String("port"),
+			c.String("username"),
+			c.String("password"),
+			c.String("dbname"),
+			c.String("table"),
+		)
 	default:
 		logrus.Error("无效的 driver")
 	}

@@ -16,12 +16,16 @@ func InitSqlite(dsn string) {
 	_ = DB.AutoMigrate(Response{})
 }
 
-func InitSql(host, port, username, password, dbname string) {
+var tableName = ""
+
+func InitSql(host, port, username, password, dbname, table string) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, dbname)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Sprintf("数据库链接失败：%s", err.Error()))
 	}
+
+	tableName = table
 
 	DB = db
 	_ = DB.AutoMigrate(Response{})
@@ -34,7 +38,7 @@ type Response struct {
 }
 
 func (r Response) TableName() string {
-	return "cities"
+	return tableName
 }
 
 func save(response ...Response) {

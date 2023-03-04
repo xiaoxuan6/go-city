@@ -19,7 +19,7 @@ go-city sync --db=./sqlite.db
 ## Database
 
 ```shell
-go-city sync --host=127.0.0.1 --port=3306 --username=root --password=root --dbname=city
+go-city sync --host=127.0.0.1 --port=3306 --username=root --password=root --dbname=city --table=city
 ```
 
 ## More
@@ -42,5 +42,6 @@ OPTIONS:
    --username value          database username (default: "root") [%GO_CITY_DB_USERNAME%]
    --password value          database password (default: "root") [%GO_CITY_DB_PASSWORD%]
    --dbname value            database dbname [%GO_CITY_DB_NAME%]
+   --table value             database table name (default: "cities") [%GO_CITY_DB_TABLE_NAME%]
    --help, -h                show help
 ```

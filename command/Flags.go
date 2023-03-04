@@ -64,5 +64,11 @@ var Flags = []cli.Flag{
 		Value:    "",
 		EnvVars:  []string{"GO_CITY_DB_NAME"},
 	},
-
+	&cli.StringFlag{
+		Name:     "table",
+		Usage:    "database table name",
+		Required: false,
+		Value:    "cities",
+		EnvVars:  []string{"GO_CITY_DB_TABLE_NAME"},
+	},
 }
