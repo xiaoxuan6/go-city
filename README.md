@@ -10,6 +10,20 @@ go install https://github.com/xiaoxuan6/go-city.git
 
 # Usage
 
+## Sqilte
+
+```shell
+go-city sync --db=./sqlite.db
+```
+
+## Database
+
+```shell
+go-city sync --host=127.0.0.1 --port=3306 --username=root --password=root --dbname=city
+```
+
+## More
+
 ```shell
 NAME:
    go-city sync
@@ -26,7 +40,7 @@ OPTIONS:
    --host value              database host (default: "127.0.0.1") [%GO_CITY_DB_HOST%]
    --port value              database port (default: "3306") [%GO_CITY_DB_PORT%]
    --username value          database username (default: "root") [%GO_CITY_DB_USERNAME%]
-   --password value          database password (default: "3306") [%GO_CITY_DB_PASSWORD%]
-   --dbname value            database dbname (default: "3306") [%GO_CITY_DB_NAME%]
+   --password value          database password (default: "root") [%GO_CITY_DB_PASSWORD%]
+   --dbname value            database dbname [%GO_CITY_DB_NAME%]
    --help, -h                show help
 ```

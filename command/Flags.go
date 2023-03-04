@@ -54,14 +54,14 @@ var Flags = []cli.Flag{
 		Name:     "password",
 		Usage:    "database password",
 		Required: false,
-		Value:    "3306",
+		Value:    "root",
 		EnvVars:  []string{"GO_CITY_DB_PASSWORD"},
 	},
 	&cli.StringFlag{
 		Name:     "dbname",
 		Usage:    "database dbname",
 		Required: false,
-		Value:    "3306",
+		Value:    "",
 		EnvVars:  []string{"GO_CITY_DB_NAME"},
 	},
 
