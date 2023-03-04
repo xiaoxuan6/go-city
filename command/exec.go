@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"fmt"
 	"github.com/guonaihong/gout"
 	"github.com/schollz/progressbar/v3"
@@ -73,6 +74,7 @@ func Run(c *cli.Context) error {
 		)
 	default:
 		logrus.Error("无效的 driver")
+		return errors.New("无效的 driver")
 	}
 
 	syncAll()
@@ -115,7 +117,7 @@ var cityResponse []Response
 func city(id int) {
 	result := syncById(id)
 	cityResponse = append(cityResponse, result...)
-	count.CityNum = count.CityNum + len(cityResponse)
+	count.CityNum = count.CityNum + len(result)
 
 	if len(result) > 0 {
 		save(result...)
@@ -131,7 +133,7 @@ var areaResponse []Response
 func area(id int) {
 	result := syncById(id)
 	areaResponse = append(areaResponse, result...)
-	count.AreaNum = count.AreaNum + len(areaResponse)
+	count.AreaNum = count.AreaNum + len(result)
 
 	if len(result) > 0 {
 		save(result...)
@@ -147,7 +149,7 @@ var streetResponse []Response
 func street(id int) {
 	result := syncById(id)
 	streetResponse = append(streetResponse, result...)
-	count.StreetNum = count.StreetNum + len(streetResponse)
+	count.StreetNum = count.StreetNum + len(result)
 
 	if len(result) > 0 {
 		save(result...)
