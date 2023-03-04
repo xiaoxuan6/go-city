@@ -11,9 +11,12 @@ import (
 
 var DB *gorm.DB
 
-func InitSqlite(dsn string) {
+func InitSqlite(dsn, table string) {
 	DB, _ = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 
+	tableName = table
+
+	DB.Logger = logger.Default.LogMode(logger.Silent)
 	_ = DB.AutoMigrate(Response{})
 }
 

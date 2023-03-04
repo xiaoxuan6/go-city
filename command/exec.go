@@ -60,9 +60,9 @@ func Run(c *cli.Context) error {
 	driver := c.String("driver")
 	switch driver {
 	case "sqlite":
-		InitSqlite(c.String("db"))
+		InitSqlite(c.String("db"), c.String("table"))
 	case "memory":
-		InitSqlite(":memory:")
+		InitSqlite(":memory:", c.String("table"))
 	case "database":
 		InitSql(
 			c.String("host"),
