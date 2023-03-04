@@ -28,7 +28,7 @@ func InitSql(host, port, username, password, dbname, table string) {
 	tableName = table
 
 	DB = db
-	_ = DB.AutoMigrate(Response{})
+	_ = DB.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(Response{})
 }
 
 type Response struct {
