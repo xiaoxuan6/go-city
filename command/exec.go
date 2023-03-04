@@ -7,6 +7,8 @@ import (
 	"github.com/schollz/progressbar/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"sync"
+	"time"
 )
 
 var provinces = map[int]string{
@@ -55,6 +57,9 @@ var count struct {
 	StreetNum   int `json:"street_num"`
 }
 
+var provinceCount = len(provinces)
+var bar = progressbar.Default(int64(provinceCount))
+
 func Run(c *cli.Context) error {
 
 	driver := c.String("driver")
@@ -77,13 +82,38 @@ func Run(c *cli.Context) error {
 		return errors.New("无效的 driver")
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func(wg *sync.WaitGroup) {
+		for {
+			select {
+			case <-ch:
+				data, ok := <-ch
+				if !ok {
+					break
+				}
+
+				if len(data) > 0 {
+					save(data...)
+				}
+			case <-time.After(time.Second * 3):
+				goto Loop
+			}
+		}
+	Loop:
+		wg.Done()
+	}(&wg)
+
 	syncAll()
+	wg.Wait()
+	_ = bar.Add(1)
 
 	logrus.Info(fmt.Sprintf("数据同步完成，其中省级行政区：%d，城市：%d，区县：%d，乡镇街道：%d", count.ProvinceNum, count.CityNum, count.AreaNum, count.StreetNum))
 
 	return nil
 }
 
+// 所有涉及调用该处，注意并发，可能会出现报错： http2: server sent GOAWAY and closed the connection; LastStreamID=1999, ErrCode=NO_ERROR, debug=
 func syncById(pid int) (res []Response) {
 	err := gout.GET(fmt.Sprintf(url, pid)).
 		BindJSON(&res).
@@ -100,58 +130,60 @@ func syncById(pid int) (res []Response) {
 	return
 }
 
+var ch = make(chan []Response, 100)
+
+// 34 个省
 func syncAll() {
-	provinceCount := len(provinces)
 	count.ProvinceNum = provinceCount
-	bar := progressbar.Default(int64(provinceCount))
+
+	var i = 1
+	var data []Response
 	for key, val := range provinces {
-		save(Response{ID: key, Name: val, Pid: 0})
+		data = append(data, Response{ID: key, Name: val, Pid: 0})
 
 		city(key)
-		_ = bar.Add(1)
+
+		if i < provinceCount {
+			_ = bar.Add(1)
+		}
+		i = i + 1
 	}
+	ch <- data
 }
 
-var cityResponse []Response
-
+// 452 个城市
 func city(id int) {
 	result := syncById(id)
-	cityResponse = append(cityResponse, result...)
 	count.CityNum = count.CityNum + len(result)
 
-	if len(result) > 0 {
-		save(result...)
-	}
+	ch <- result
 
 	for _, val := range result {
-		area(val.ID)
+		// 这里最适合使用协成调用, 只有奇数使用协成提高速度
+		if val.ID%2 == 1 {
+			go area(val.ID)
+		} else {
+			area(val.ID)
+		}
 	}
 }
 
-var areaResponse []Response
-
+// 5234 个乡镇
 func area(id int) {
 	result := syncById(id)
-	areaResponse = append(areaResponse, result...)
 	count.AreaNum = count.AreaNum + len(result)
 
-	if len(result) > 0 {
-		save(result...)
-	}
+	ch <- result
 
 	for _, val := range result {
 		street(val.ID)
 	}
 }
 
-var streetResponse []Response
-
+// 43564 个乡镇街道
 func street(id int) {
 	result := syncById(id)
-	streetResponse = append(streetResponse, result...)
 	count.StreetNum = count.StreetNum + len(result)
 
-	if len(result) > 0 {
-		save(result...)
-	}
+	ch <- result
 }
