@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -28,6 +29,7 @@ func InitSql(host, port, username, password, dbname, table string) {
 	tableName = table
 
 	DB = db
+	DB.Logger = logger.Default.LogMode(logger.Silent)
 	_ = DB.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(Response{})
 }
 
