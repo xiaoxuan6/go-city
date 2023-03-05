@@ -87,15 +87,16 @@ func Run(c *cli.Context) error {
 	go func(wg *sync.WaitGroup) {
 		for {
 			select {
-			case <-ch:
-				data, ok := <-ch
+			case data, ok := <-ch:
 				if !ok {
 					break
 				}
 
-				if len(data) > 0 {
-					save(data...)
+				if len(data) < 1 {
+					break
 				}
+
+				save(data...)
 			case <-time.After(time.Second * 3):
 				goto Loop
 			}
@@ -159,12 +160,8 @@ func city(id int) {
 	ch <- result
 
 	for _, val := range result {
-		// 这里最适合使用协成调用, 只有奇数使用协成提高速度
-		if val.ID%2 == 1 {
-			go area(val.ID)
-		} else {
-			area(val.ID)
-		}
+		// 这里最适合使用协成提高速度
+		go area(val.ID)
 	}
 }
 
