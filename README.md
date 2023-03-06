@@ -43,5 +43,6 @@ OPTIONS:
    --password value          database password (default: "root") [%GO_CITY_DB_PASSWORD%]
    --dbname value            database dbname [%GO_CITY_DB_NAME%]
    --table value             database table name (default: "cities") [%GO_CITY_DB_TABLE_NAME%]
+   --force                   drop table (default: false) [%GO_CITY_DB_FORCE%]
    --help, -h                show help
 ```
