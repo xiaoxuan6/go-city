@@ -10,7 +10,7 @@ go install https://github.com/xiaoxuan6/go-city.git
 
 # Usage
 
-## Sqilte
+## Sqlite
 
 ```shell
 go-city sync --db=./sqlite.db

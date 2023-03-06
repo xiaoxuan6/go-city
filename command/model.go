@@ -32,6 +32,9 @@ func InitSql(host, port, username, password, dbname, table string) {
 	tableName = table
 
 	DB = db
+}
+
+func AutoMigrate() {
 	DB.Logger = logger.Default.LogMode(logger.Silent)
 	_ = DB.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(Response{})
 }

@@ -71,4 +71,11 @@ var Flags = []cli.Flag{
 		Value:    "cities",
 		EnvVars:  []string{"GO_CITY_DB_TABLE_NAME"},
 	},
+	&cli.BoolFlag{
+		Name: "force",
+		Usage: "drop table",
+		Required: false,
+		Value: false,
+		EnvVars: []string{"GO_CITY_DB_FORCE"},
+	},
 }
