@@ -15,9 +15,16 @@ func main() {
 			{
 				Name:        "sync",
 				Aliases:     []string{"s"},
-				Description: "同步省市区到数据库",
+				Description: "同步省市区到数据库，数据来源于京东",
 				Flags:       command.Flags,
 				Action:      command.Run,
+			},
+			{
+				Name:        "sync-tjj",
+				Aliases:     []string{"tjj"},
+				Description: "同步省市区到数据库，数据来源于国家统计局",
+				Flags:       command.Flags,
+				Action:      command.Exec,
 			},
 		},
 	}
