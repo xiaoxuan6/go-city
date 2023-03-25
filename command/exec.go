@@ -57,10 +57,11 @@ var count struct {
 	StreetNum   int `json:"street_num"`
 }
 
+var bar *progressbar.ProgressBar
 var provinceCount = len(provinces)
-var bar = progressbar.Default(int64(provinceCount))
 
 func Run(c *cli.Context) error {
+	bar = progressbar.Default(int64(provinceCount))
 
 	if err := base(c); err != nil {
 		return errors.New(err.Error())

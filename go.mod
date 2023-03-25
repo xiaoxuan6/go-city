@@ -3,6 +3,7 @@ module github.com/xiaoxuan6/go-city
 go 1.18
 
 require (
+	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/glebarez/sqlite v1.7.0
 	github.com/gocolly/colly v1.2.0
 	github.com/guonaihong/gout v0.3.6
