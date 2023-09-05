@@ -5,7 +5,7 @@
 # install
 
 ```shell
-go install https://github.com/xiaoxuan6/go-city.git
+go install github.com/xiaoxuan6/go-city@latest
 ```
 
 # Usage
