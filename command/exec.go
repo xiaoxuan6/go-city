@@ -61,6 +61,7 @@ var bar *progressbar.ProgressBar
 var provinceCount = len(provinces)
 
 func Run(c *cli.Context) error {
+	startTime := time.Now()
 	bar = progressbar.Default(int64(provinceCount))
 
 	if err := base(c); err != nil {
@@ -94,12 +95,12 @@ func Run(c *cli.Context) error {
 	wg.Wait()
 	_ = bar.Add(1)
 
-	logrus.Info(fmt.Sprintf("数据同步完成，其中省级行政区：%d，城市：%d，区县：%d，乡镇街道：%d", count.ProvinceNum, count.CityNum, count.AreaNum, count.StreetNum))
+	logrus.Info(fmt.Sprintf("数据同步完成，耗时(分钟)：%f", time.Since(startTime).Minutes()))
+	logrus.Info(fmt.Sprintf("其中省级行政区：%d，城市：%d，区县：%d，乡镇街道：%d", count.ProvinceNum, count.CityNum, count.AreaNum, count.StreetNum))
 
 	return nil
 }
 
-// 所有涉及调用该处，注意并发，可能会出现报错： http2: server sent GOAWAY and closed the connection; LastStreamID=1999, ErrCode=NO_ERROR, debug=
 func syncById(pid int) (res []Response) {
 	err := gout.GET(fmt.Sprintf(url, pid)).
 		BindJSON(&res).
@@ -118,7 +119,6 @@ func syncById(pid int) (res []Response) {
 
 var ch = make(chan []Response, 100)
 
-// 34 个省
 func syncAll() {
 	count.ProvinceNum = provinceCount
 
@@ -137,7 +137,6 @@ func syncAll() {
 	ch <- data
 }
 
-// 452 个城市
 func city(id int) {
 	result := syncById(id)
 	count.CityNum = count.CityNum + len(result)
@@ -150,7 +149,6 @@ func city(id int) {
 	}
 }
 
-// 5234 个乡镇
 func area(id int) {
 	result := syncById(id)
 	count.AreaNum = count.AreaNum + len(result)
@@ -162,7 +160,6 @@ func area(id int) {
 	}
 }
 
-// 43564 个乡镇街道
 func street(id int) {
 	result := syncById(id)
 	count.StreetNum = count.StreetNum + len(result)

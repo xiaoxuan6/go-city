@@ -25,14 +25,6 @@ func main() {
 				Action:      command.Run,
 			},
 			{
-				Name:        "sync-tjj",
-				Aliases:     []string{"tjj"},
-				Usage:       "sync data to database, data source is 统计局",
-				Description: figure.NewFigure("Go City Sync-Tjj", "", true).String() + "同步省市区到数据库，数据来源于国家统计局",
-				Flags:       command.Flags,
-				Action:      command.Exec,
-			},
-			{
 				Name:        "version",
 				Aliases:     []string{"v"},
 				Usage:       "show go city version",
