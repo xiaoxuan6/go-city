@@ -1,6 +1,6 @@
 # go-city
 
-全国「省市区县乡镇街道」，支持京东、国家统计局
+全国「省市区县乡镇街道」，数据来源于【京东】
 
 # install
 
@@ -9,8 +9,6 @@ go install github.com/xiaoxuan6/go-city@latest
 ```
 
 # Usage
-
-# 1、数据来源于【京东】
 
 ## Sqlite
 
@@ -24,20 +22,6 @@ go-city sync --db=./sqlite.db
 go-city sync --driver=database --host=127.0.0.1 --port=3306 --username=root --password=root --dbname=city --table=city
 ```
 
-# 数据来源于【国家统计局】
-
-## Sqlite
-
-```shell
-go-city sync-tjj --db=./sqlite.db
-```
-
-## Database
-
-```shell
-go-city sync-tjj --driver=database --host=127.0.0.1 --port=3306 --username=root --password=root --dbname=city --table=city
-```
-
 ## More
 
 ```shell
@@ -48,9 +32,9 @@ USAGE:
    go-city [global options] command [command options] [arguments...]
 
 COMMANDS:
-   sync, s
-   sync-tjj, tjj
-   help, h        Shows a list of commands or help for one command
+   sync, s     sync data to database, data source is jd
+   version, v  show go city version
+   help, h     Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
   --help, -h  show help
